@@ -1,0 +1,27 @@
+name: NovaPay Compliance Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  compliance-check:
+    name: OPA Conftest Compliance Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Run RBI PCI-DSS and SoD Compliance Checks
+        run: |
+          docker run --rm \
+            -v "$PWD:/project" \
+            openpolicyagent/conftest \
+            test /project/policies/compliance-controls.yaml \
+            --policy /project/policies

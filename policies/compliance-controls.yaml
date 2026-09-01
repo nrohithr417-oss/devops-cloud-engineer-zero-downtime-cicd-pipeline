@@ -1,0 +1,20 @@
+project: novapay
+
+controls:
+  rbi:
+    secure_cicd: true
+    vulnerability_scanning: true
+    change_management: true
+    audit_logging: true
+
+  pci_dss:
+    secure_software_development: true
+    vulnerability_management: true
+    access_control: true
+    security_testing: true
+
+  segregation_of_duties:
+    developer_cannot_self_approve: true
+    production_requires_approval: true
+    deployment_uses_service_account: true
+    no_direct_production_access: true
