@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: novapay-payment-api-bluegreen
+  namespace: default
+
+spec:
+  replicas: 2
+
+  strategy:
+    blueGreen:
+      activeService: novapay-payment-active
+      previewService: novapay-payment-preview
+      autoPromotionEnabled: false
+
+  selector:
+    matchLabels:
+      app: novapay-payment-api-bluegreen
+
+  template:
+    metadata:
+      labels:
+        app: novapay-payment-api-bluegreen
+
+    spec:
+      containers:
+        - name: novapay-payment-api
+          image: novapay-payment-api:1.0.2
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8000
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

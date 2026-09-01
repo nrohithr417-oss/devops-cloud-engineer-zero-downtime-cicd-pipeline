@@ -1,0 +1,84 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: novapay-payment-api-canary
+  namespace: default
+
+spec:
+  replicas: 4
+
+  strategy:
+    canary:
+      steps:
+        - setWeight: 5
+        - pause:
+            duration: 30s
+
+        - setWeight: 10
+        - pause:
+            duration: 30s
+
+        - setWeight: 25
+
+        - analysis:
+            templates:
+              - templateName: novapay-success-rate
+
+        - pause:
+            duration: 30s
+
+        - setWeight: 50
+        - pause:
+            duration: 30s
+
+        - setWeight: 100
+
+  selector:
+    matchLabels:
+      app: novapay-payment-api-canary
+
+  template:
+    metadata:
+      labels:
+        app: novapay-payment-api-canary
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8000"
+
+    spec:
+      containers:
+        - name: novapay-payment-api
+          image: novapay-payment-api:1.0.4
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8000
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

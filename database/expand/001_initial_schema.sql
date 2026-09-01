@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS payments (
+    id SERIAL PRIMARY KEY,
+    transaction_id VARCHAR(100) UNIQUE NOT NULL,
+    amount NUMERIC(12,2) NOT NULL,
+    currency VARCHAR(10) NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    customer_name VARCHAR(150) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

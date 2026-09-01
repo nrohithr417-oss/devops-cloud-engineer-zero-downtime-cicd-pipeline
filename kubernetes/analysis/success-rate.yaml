@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: novapay-success-rate
+  namespace: default
+
+spec:
+  metrics:
+    - name: payment-activity
+      interval: 30s
+      count: 3
+      successCondition: result[0] >= 0
+      failureLimit: 1
+
+      provider:
+        prometheus:
+          address: http://prometheus-server.monitoring.svc.cluster.local
+
+          query: |
+            sum(novapay_payments_total)

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: novapay-payment-active
+  namespace: default
+spec:
+  selector:
+    app: novapay-payment-api-bluegreen
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: novapay-payment-preview
+  namespace: default
+spec:
+  selector:
+    app: novapay-payment-api-bluegreen
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
