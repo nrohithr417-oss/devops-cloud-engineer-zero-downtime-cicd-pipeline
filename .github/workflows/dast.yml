@@ -1,0 +1,57 @@
+name: NovaPay DAST Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dast-scan:
+    name: ZAP DAST Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Build NovaPay Docker Image
+        run: |
+          docker build \
+            -f docker/Dockerfile \
+            -t novapay-payment-api:${{ github.sha }} \
+            .
+
+      - name: Start NovaPay Application
+        run: |
+          docker run -d \
+            --name novapay-api \
+            -p 8000:8000 \
+            novapay-payment-api:${{ github.sha }}
+
+      - name: Wait for Application
+        run: |
+          for i in {1..30}; do
+            if curl --fail http://127.0.0.1:8000/health; then
+              echo "NovaPay API is healthy"
+              exit 0
+            fi
+
+            echo "Waiting for NovaPay API..."
+            sleep 2
+          done
+
+          echo "NovaPay API failed to start"
+          docker logs novapay-api
+          exit 1
+
+      - name: Run ZAP Baseline DAST Scan
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: "http://127.0.0.1:8000"
+          fail_action: false
+          allow_issue_writing: false
+          artifact_name: "novapay-zap-report"
