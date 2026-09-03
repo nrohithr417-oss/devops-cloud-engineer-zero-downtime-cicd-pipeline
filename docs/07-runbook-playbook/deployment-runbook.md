@@ -131,4 +131,16 @@ Application: NovaPay Payment API
 Version: 1.4.0
 Commit SHA: abc123def456
 Image: novapay/payment-api:1.4.0
-Digest: sha256:<digest>
+Digest: sha256:<digest>---
+
+## Related Deliverables
+
+- [Deliverable 1 – Pipeline Architecture](../01-pipeline-architecture/architecture.md)
+- [Deliverable 2 – Deployment Strategies](../02-deployment-strategies/deployment-strategy.md)
+- [Deliverable 3 – Compliance Gates](../03-compliance-gates/compliance-gates.md)
+- [Deliverable 4 – Database Migration](../04-database-migration/database-migration-strategy.md)
+- [Deliverable 5 – Environment Promotion](../05-environment-promotion/environment-promotion.md)
+- [Deliverable 6 – Rollback Specification](../06-rollback-specification/rollback-specification.md)
+- [Deliverable 8 – Observability](../08-observability/observability-strategy.md)
+- [Friday 5 PM Incident Simulation](../09-incident-simulation/friday-5pm-incident.md)
+- [Incident Postmortem](../09-incident-simulation/postmortem.md)

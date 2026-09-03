@@ -1,0 +1,105 @@
+<mxfile host="app.diagrams.net" modified="2026-09-03T00:00:00.000Z" agent="ChatGPT" version="24.7.17">
+  <diagram id="novapay-pipeline" name="NovaPay CI-CD Architecture">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="NovaPay Zero-Downtime CI/CD Pipeline Architecture" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="30" width="980" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="source" value="Developer Commit&#xa;GitHub Repository" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="150" width="150" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s1" value="Stage 1&#xa;Source &amp; Build&#xa;GitHub Actions / Docker" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="140" width="170" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s2" value="Stage 2&#xa;Unit &amp; Integration Tests&#xa;pytest" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="140" width="170" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s3" value="Stage 3&#xa;SAST / Dependency / SBOM&#xa;Security Gates" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="140" width="180" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s4" value="Stage 4&#xa;Compliance / OPA&#xa;RBI / PCI-DSS / SoD" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="870" y="140" width="180" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s5" value="Stage 5&#xa;DAST / Contract Testing&#xa;OWASP ZAP" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="140" width="180" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s6" value="Stage 6&#xa;Container Validation&#xa;Immutable Image Digest" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="140" width="180" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s7" value="Stage 7&#xa;Environment Promotion&#xa;Dev → Staging → Pre-Prod → Prod" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="140" width="210" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s8" value="Stage 8&#xa;Production Verification&#xa;Monitoring / Rollback" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="360" width="210" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev" value="DEV" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="180" y="560" width="130" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="staging" value="STAGING" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="560" width="130" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="preprod" value="PRE-PROD" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="560" width="130" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod" value="PRODUCTION&#xa;Blue-Green / Canary" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="550" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prometheus" value="Prometheus" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="540" width="150" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="grafana" value="Grafana Dashboards" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="540" width="170" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="rollback" value="Automated Rollback&#xa;Category A &lt;60s&#xa;Category B &lt;15m" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="690" width="200" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="audit" value="Audit Evidence&#xa;Approvals / Scan Results / Deployment Records" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="690" width="250" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" edge="1" parent="1" source="source" target="s1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="s1" target="s2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="s2" target="s3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="s3" target="s4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="s4" target="s5"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="s5" target="s6"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="s6" target="s7"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="s7" target="s8"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="dev" target="staging"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="staging" target="preprod"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="preprod" target="prod"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="prod" target="prometheus"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="prometheus" target="grafana"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="prometheus" target="rollback"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="rollback" target="prod"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="s4" target="audit"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="s8" target="audit"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

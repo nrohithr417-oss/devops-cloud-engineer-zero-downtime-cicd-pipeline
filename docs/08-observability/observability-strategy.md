@@ -795,4 +795,16 @@ The NovaPay observability strategy provides end-to-end visibility across the CI/
 
 DORA metrics provide delivery-performance measurement, while pipeline-specific metrics provide detailed engineering, security, compliance, and deployment visibility.
 
-Three dedicated dashboards provide views tailored for Engineering, Management, and Regulatory stakeholders.
+Three dedicated dashboards provide views tailored for Engineering, Management, and Regulatory stakeholders.---
+
+## Related Deliverables
+
+- [Deliverable 1 – Pipeline Architecture](../01-pipeline-architecture/architecture.md)
+- [Deliverable 2 – Deployment Strategies](../02-deployment-strategies/deployment-strategy.md)
+- [Deliverable 3 – Compliance Gates](../03-compliance-gates/compliance-gates.md)
+- [Deliverable 4 – Database Migration](../04-database-migration/database-migration-strategy.md)
+- [Deliverable 5 – Environment Promotion](../05-environment-promotion/environment-promotion.md)
+- [Deliverable 6 – Rollback Specification](../06-rollback-specification/rollback-specification.md)
+- [Deliverable 7 – Deployment Runbook](../07-runbook-playbook/deployment-runbook.md)
+- [Friday 5 PM Incident Simulation](../09-incident-simulation/friday-5pm-incident.md)
+- [Incident Postmortem](../09-incident-simulation/postmortem.md)

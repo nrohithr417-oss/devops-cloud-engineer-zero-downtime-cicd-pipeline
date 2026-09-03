@@ -295,4 +295,15 @@ Release Manager Approval
 SRE Lead Approval
        |
        v
-Production
+Production---
+
+## Related Deliverables
+
+- [Deliverable 1 – Pipeline Architecture](../01-pipeline-architecture/architecture.md)
+- [Deliverable 2 – Deployment Strategies](../02-deployment-strategies/deployment-strategy.md)
+- [Deliverable 3 – Compliance Gates](../03-compliance-gates/compliance-gates.md)
+- [Deliverable 4 – Database Migration](../04-database-migration/database-migration-strategy.md)
+- [Deliverable 6 – Rollback Specification](../06-rollback-specification/rollback-specification.md)
+- [Deliverable 7 – Deployment Runbook](../07-runbook-playbook/deployment-runbook.md)
+- [Deliverable 8 – Observability](../08-observability/observability-strategy.md)
+- [Incident Simulation – Friday 5 PM](../09-incident-simulation/friday-5pm-incident.md)

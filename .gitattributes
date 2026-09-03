@@ -1,0 +1,18 @@
+# Default text handling
+* text=auto
+
+# Linux scripts must use LF
+*.sh text eol=lf
+
+# Infrastructure/configuration files
+*.tf text eol=lf
+*.hcl text eol=lf
+*.rego text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+
+# Binary files - never modify line endings
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary

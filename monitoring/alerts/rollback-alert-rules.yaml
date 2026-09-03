@@ -1,0 +1,194 @@
+groups:
+  - name: novapay-category-a-rollback
+    interval: 15s
+    rules:
+
+      - alert: NovaPayHigh5xxRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[1m]))
+            /
+            clamp_min(sum(rate(http_requests_total[1m])), 1)
+          ) > 0.05
+        for: 60s
+        labels:
+          severity: critical
+          rollback_category: "A"
+          action: auto_rollback
+        annotations:
+          summary: "NovaPay HTTP 5xx rate is above 5%"
+          description: "HTTP 5xx rate exceeded 5% for 60 seconds."
+          remediation: "Immediately route traffic to the previous stable release."
+
+      - alert: NovaPayHealthCheckFailures
+        expr: |
+          sum_over_time((up{job="novapay"} == 0)[45s:15s]) >= 3
+        labels:
+          severity: critical
+          rollback_category: "A"
+          action: auto_rollback
+        annotations:
+          summary: "NovaPay health check failed three consecutive times"
+          description: "Three failed health observations were detected."
+          remediation: "Freeze rollout and restore the previous stable release."
+
+      - alert: NovaPayContainerOOMKilled
+        expr: |
+          kube_pod_container_status_last_terminated_reason{
+            namespace="novapay",
+            reason="OOMKilled"
+          } == 1
+        labels:
+          severity: critical
+          rollback_category: "A"
+          action: auto_rollback
+        annotations:
+          summary: "NovaPay container was OOMKilled"
+          description: "A NovaPay workload was terminated because of memory exhaustion."
+          remediation: "Immediately rollback the candidate release."
+
+      - alert: NovaPayCrashLoopBackOff
+        expr: |
+          kube_pod_container_status_waiting_reason{
+            namespace="novapay",
+            reason="CrashLoopBackOff"
+          } == 1
+        labels:
+          severity: critical
+          rollback_category: "A"
+          action: auto_rollback
+        annotations:
+          summary: "NovaPay workload entered CrashLoopBackOff"
+          description: "A production NovaPay container is repeatedly failing to start."
+          remediation: "Immediately restore the previous stable deployment."
+
+      - alert: NovaPayDatabasePoolExhausted
+        expr: |
+          novapay_db_connection_pool_available == 0
+        for: 30s
+        labels:
+          severity: critical
+          rollback_category: "A"
+          action: auto_rollback
+        annotations:
+          summary: "NovaPay database connection pool exhausted"
+          description: "No application database connections are available."
+          remediation: "Immediately rollback and verify database connectivity."
+
+  - name: novapay-category-b-rollback
+    interval: 30s
+    rules:
+
+      - alert: NovaPayP99LatencyRegression
+        expr: |
+          histogram_quantile(
+            0.99,
+            sum by (le) (
+              rate(http_request_duration_seconds_bucket{
+                job="novapay"
+              }[5m])
+            )
+          )
+          >
+          (
+            2 * novapay_latency_p99_baseline_seconds
+          )
+        for: 5m
+        labels:
+          severity: high
+          rollback_category: "B"
+          action: escalate_then_rollback
+        annotations:
+          summary: "NovaPay p99 latency exceeds twice the baseline"
+          description: "p99 latency remained above 2x the accepted baseline for five minutes."
+          remediation: "Alert on-call SRE and rollback if not resolved inside the escalation window."
+
+      - alert: NovaPayHighErrorBudgetBurn
+        expr: |
+          novapay_error_budget_burn_rate > 10
+        for: 10m
+        labels:
+          severity: high
+          rollback_category: "B"
+          action: escalate_then_rollback
+        annotations:
+          summary: "NovaPay error budget burn rate exceeds 10x"
+          description: "Error budget consumption remained above the escalation threshold for ten minutes."
+          remediation: "Escalate to on-call and rollback if no timely response is received."
+
+      - alert: NovaPayTransactionSuccessRegression
+        expr: |
+          (
+            novapay_transaction_success_rate_baseline
+            -
+            novapay_transaction_success_rate
+          ) > 0.02
+        for: 5m
+        labels:
+          severity: high
+          rollback_category: "B"
+          action: escalate_then_rollback
+        annotations:
+          summary: "NovaPay transaction success rate dropped more than 2%"
+          description: "Payment transaction success is more than two percentage points below baseline."
+          remediation: "Escalate to SRE/application owner and prepare rollback."
+
+      - alert: NovaPayHighCPU
+        expr: |
+          novapay_cpu_utilization_percent > 90
+        for: 5m
+        labels:
+          severity: high
+          rollback_category: "B"
+          action: escalate_then_rollback
+        annotations:
+          summary: "NovaPay CPU utilization exceeds 90%"
+          description: "CPU saturation persisted for five minutes."
+          remediation: "Alert on-call and rollback if the deployment is correlated with the regression."
+
+      - alert: NovaPayHighMemory
+        expr: |
+          novapay_memory_utilization_percent > 85
+        for: 5m
+        labels:
+          severity: high
+          rollback_category: "B"
+          action: escalate_then_rollback
+        annotations:
+          summary: "NovaPay memory utilization exceeds 85%"
+          description: "Memory saturation persisted for five minutes."
+          remediation: "Alert on-call and rollback if the release is identified as the cause."
+
+  - name: novapay-rollback-verification
+    interval: 30s
+    rules:
+
+      - alert: NovaPayRollbackHealthVerificationFailed
+        expr: |
+          up{job="novapay"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          rollback_category: verification
+          action: incident
+        annotations:
+          summary: "NovaPay remains unhealthy after rollback"
+          description: "Application health has not recovered after the rollback window."
+          remediation: "Escalate to a critical incident and perform manual recovery."
+
+      - alert: NovaPayRollback5xxVerificationFailed
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[2m]))
+            /
+            clamp_min(sum(rate(http_requests_total[2m])), 1)
+          ) > 0.01
+        for: 2m
+        labels:
+          severity: critical
+          rollback_category: verification
+          action: incident
+        annotations:
+          summary: "NovaPay error rate remains elevated after rollback"
+          description: "HTTP 5xx rate remains above 1% after restoring the stable release."
+          remediation: "Open incident and begin manual production recovery."
