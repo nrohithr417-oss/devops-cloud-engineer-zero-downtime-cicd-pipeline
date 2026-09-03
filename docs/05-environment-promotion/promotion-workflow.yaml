@@ -1,0 +1,129 @@
+name: NovaPay Environment Promotion
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Container image version to promote"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+
+  # DEV
+  deploy-dev:
+    name: Deploy to Development
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate image tag
+        run: |
+          echo "Validating NovaPay image: ${{ inputs.image_tag }}"
+
+      - name: Deploy to Development
+        run: |
+          echo "Deploying ${{ inputs.image_tag }} to Development"
+
+      - name: Run unit tests
+        run: |
+          echo "Running unit tests and coverage checks"
+
+      - name: Run SAST
+        run: |
+          echo "Running SAST security gate"
+
+  # STAGING
+  deploy-staging:
+    name: Promote to Staging
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Promote same artifact
+        run: |
+          echo "Promoting ${{ inputs.image_tag }} to Staging"
+
+      - name: Integration tests
+        run: |
+          echo "Running integration tests"
+
+      - name: Contract tests
+        run: |
+          echo "Running consumer-driven contract tests"
+
+      - name: DAST
+        run: |
+          echo "Running DAST security scan"
+
+      - name: Dependency scan
+        run: |
+          echo "Running dependency vulnerability scan"
+
+      - name: Performance validation
+        run: |
+          echo "Validating p99 latency and load requirements"
+
+  # PRE-PRODUCTION
+  deploy-preprod:
+    name: Promote to Pre-Production
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: pre-production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Promote same artifact
+        run: |
+          echo "Promoting ${{ inputs.image_tag }} to Pre-Production"
+
+      - name: Validate database migration
+        run: |
+          echo "Validating expand-contract database migration"
+
+      - name: Run compliance gates
+        run: |
+          echo "Validating RBI and PCI-DSS compliance gates"
+
+      - name: UAT validation
+        run: |
+          echo "Running User Acceptance Testing"
+
+  # PRODUCTION
+  deploy-production:
+    name: Promote to Production
+    needs: deploy-preprod
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify release
+        run: |
+          echo "Verifying production release requirements"
+
+      - name: Deploy same immutable artifact
+        run: |
+          echo "Deploying ${{ inputs.image_tag }} to Production"
+
+      - name: Post-deployment verification
+        run: |
+          echo "Running production health and readiness checks"
+
+      - name: Record audit information
+        run: |
+          echo "Recording commit SHA, image tag and deployment metadata"
